@@ -1,3 +1,2 @@
-# Have a nice day!
-
-Some text
+# Project
+It is my 1st project on github
