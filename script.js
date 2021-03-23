@@ -10,6 +10,14 @@ class MyMath {
 			'+' : (a,b) => a +  b,
 			'-' : (a,b) => a -  b,
 		}
+		this.funcs = {
+			' '  : (a) => a,
+			'sin': (a) => Math.sin(a),
+			'cos': (a) => Math.cos(a),
+			'tg' : (a) => Math.tan(a),
+			'ctg': (a) => 1 / Math.tan(a),
+			'ln' : (a) => Math.log(a)
+		}
 		this.operQueue = [['^'] , ['*', '/'], ['+', '-']];
 	}
 
@@ -29,12 +37,18 @@ class MyMath {
 		const queue = this.operQueue;
 
 		//Check and evaluate expression in brackets
-
-		if (expr.indexOf('(') !== -1) {
-			expr = expr.replace(/\(([^)]+)\)/, (s,m1) => {
-				return this.eval(m1)
-			})
-		}
+		(() => {
+			const maxRepeatCount = 500;
+			let i=0; 
+			while(expr.indexOf('(') !== -1) {
+				expr = expr.replace(/([a-z]+|\s)\(([^)]+)\)/, (s,m1,m2) => {
+					return this.funcs[m1](this.eval(m2))
+				})
+				expr = this.transformExpr(expr)
+				i++;
+				if (i > maxRepeatCount) return null
+			}
+		})()
 		
 
 		expr = expr.split(' ')
@@ -66,10 +80,9 @@ class MyMath {
 
 window.onload = () => {
 
-	let a = '(1+2)^2';
+	let a = '1+cos(0)+2*(1+1)/2';
 	let math = new MyMath()
 	console.log(a)
 	console.log(math.transformExpr(a))
 	console.log(math.eval(a))
-
 }
