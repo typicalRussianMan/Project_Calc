@@ -14,17 +14,30 @@ class MyMath {
 	}
 
 	transformExpr(str) {
-		/*Удаляем все пробелы*/
+		/*Remove all spaces*/
 		str = str.replace(/\s/g, '')
-		/*Ищет в строке знаки операции и окружает их пробелами*/
-		return str.replace(/([/*-+\^])/g, ' $1 ')
+		/*Look for operations signs is the string and separate them with spaces*/
+		str = str.replace(/([/*-+\^])/g, ' $1 ')
+		/*Separate brackets*/
+		str = str.replace(/(\()/g, '$1 ').replace(/(\))/g, ' $1')
+		return str
 	}
 
 	eval(expr) {
-		expr = this.transformExpr(expr).split(' ');
+		expr = this.transformExpr(expr);
 		const opers = this.opers;
-		const queue = this.operQueue
+		const queue = this.operQueue;
 
+		//Check and evaluate expression in brackets
+
+		if (expr.indexOf('(') !== -1) {
+			expr = expr.replace(/\(([^)]+)\)/, (s,m1) => {
+				return this.eval(m1)
+			})
+		}
+		
+
+		expr = expr.split(' ')
 		for (let i=0; i < queue.length; i++) {
 
 			for (let j = 0; j < expr.length; j++) {
@@ -53,8 +66,7 @@ class MyMath {
 
 window.onload = () => {
 
-	let a = '2+2*2+3^3';
-	a = prompt('Enter expression')
+	let a = '(1+2)^2';
 	let math = new MyMath()
 	console.log(a)
 	console.log(math.transformExpr(a))
